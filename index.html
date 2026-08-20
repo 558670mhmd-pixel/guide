@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل توافقات الشاشات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --primary-accent: #0284c7;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 25px 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .developer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-top: 10px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .developer-badge:hover {
+            border-color: #1877f2;
+            color: #1877f2;
+        }
+
+        .developer-badge i {
+            color: #1877f2;
+        }
+
+        .brands-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .brand-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.25s ease-in-out;
+            box-shadow: var(--shadow);
+        }
+
+        .brand-card:hover, .brand-card:active {
+            transform: translateY(-3px);
+            border-color: var(--primary-accent);
+            box-shadow: 0 15px 30px -5px rgba(2, 132, 199, 0.12);
+        }
+
+        .brand-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .brand-title-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name-ar {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .brand-name-en {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .arrow-icon {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            z-index: 1000;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: popIn 0.25s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 14px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary-accent);
+        }
+
+        .close-btn {
+            background: #f1f5f9;
+            border: none;
+            color: var(--text-muted);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-accent);
+        }
+
+        .modal-search {
+            width: 100%;
+            padding: 14px 45px 14px 15px;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .modal-search:focus {
+            border-color: var(--primary-accent);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+        }
+
+        .results-list {
+            list-style: none;
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        .item-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .item-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary-accent);
+            margin-bottom: 10px;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .devices-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            direction: ltr;
+            justify-content: flex-end;
+        }
+
+        .tag {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            color: #334155;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .hint-text {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 20px 0;
+        }
+
+        .footer-rights {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-rights a {
+            color: #1877f2;
+            text-decoration: none;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-rights a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-content">
+        <div class="header">
+            <h1><i class="fa-solid fa-layer-group"></i> دليل توافقات الشاشات</h1>
+            <a href="https://www.facebook.com/share/1992jnGkyj/" target="_blank" class="developer-badge">
+                <i class="fa-brands fa-facebook"></i> Developed by Muhammad Al-Dirisawi
+            </a>
+        </div>
+
+        <div class="brands-grid">
+            <!-- انفنكس -->
+            <div class="brand-card" onclick="openBrand('infinix', 'انفنكس (Infinix)')">
+                <div class="brand-info">
+                    <div class="brand-icon-box" style="color: #16a34a;">I</div>
+                    <div class="brand-title-group">
+                        <span class="brand-name-ar">انفنكس</span>
+                        <span class="brand-name-en">Infinix</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            </div>
+
+            <!-- تيكنو -->
+            <div class="brand-card" onclick="openBrand('tecno', 'تيكنو (Tecno)')">
+                <div class="brand-info">
+                    <div class="brand-icon-box" style="color: #0284c7;">T</div>
+                    <div class="brand-title-group">
+                        <span class="brand-name-ar">تيكنو</span>
+                        <span class="brand-name-en">Tecno</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            </div>
+
+            <!-- أوبو -->
+            <div class="brand-card" onclick="openBrand('oppo', 'أوبو (Oppo)')">
+                <div class="brand-info">
+                    <div class="brand-icon-box" style="color: #10b981;">O</div>
+                    <div class="brand-title-group">
+                        <span class="brand-name-ar">أوبو</span>
+                        <span class="brand-name-en">Oppo</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            </div>
+
+            <!-- ريلمي -->
+            <div class="brand-card" onclick="openBrand('realme', 'ريلمي (Realme)')">
+                <div class="brand-info">
+                    <div class="brand-icon-box" style="color: #eab308;">R</div>
+                    <div class="brand-title-group">
+                        <span class="brand-name-ar">ريلمي</span>
+                        <span class="brand-name-en">Realme</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            </div>
+
+            <!-- سامسونج -->
+            <div class="brand-card" onclick="openBrand('samsung', 'سامسونج (Samsung)')">
+                <div class="brand-info">
+                    <div class="brand-icon-box" style="color: #2563eb;">S</div>
+                    <div class="brand-title-group">
+                        <span class="brand-name-ar">سامسونج</span>
+                        <span class="brand-name-en">Samsung</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            </div>
+
+            <!-- شاومي -->
+            <div class="brand-card" onclick="openBrand('xiaomi', 'شاومي (Xiaomi / Poco)')">
+                <div class="brand-info">
+                    <div class="brand-icon-box" style="color: #f97316;">Mi</div>
+                    <div class="brand-title-group">
+                        <span class="brand-name-ar">شاومي</span>
+                        <span class="brand-name-en">Xiaomi / Poco</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            </div>
+
+            <!-- ايتل -->
+            <div class="brand-card" onclick="openBrand('itel', 'ايتل (Itel)')">
+                <div class="brand-info">
+                    <div class="brand-icon-box" style="color: #dc2626;">i</div>
+                    <div class="brand-title-group">
+                        <span class="brand-name-ar">ايتل</span>
+                        <span class="brand-name-en">Itel</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- حقوق الملكية -->
+    <footer class="footer-rights">
+        <p>© Designed & Developed by <a href="https://www.facebook.com/share/1992jnGkyj/" target="_blank"><i class="fa-brands fa-facebook"></i> Muhammad Al-Dirisawi</a></p>
+    </footer>
+
+    <!-- نافذة البحث -->
+    <div class="modal-overlay" id="brandModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">اسم الشركة</div>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+
+            <div class="search-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="modalSearchInput" class="modal-search" placeholder="اكتب اسم الجهاز للبحث..." onkeyup="executeSearch()">
+            </div>
+
+            <div id="hintText" class="hint-text">اكتب اسم الجهاز أو الشاشة في الأعلى لعرض التوافقات...</div>
+
+            <ul class="results-list" id="modalResultsList">
+
+                <!-- 1. مجموعة Samsung Galaxy A30 / A50 (الجديدة) -->
+                <li class="item-card samsung-item">
+                    <div class="item-title">Samsung Galaxy A30 / A50 / A50s Series</div>
+                    <div class="devices-tags">
+                        <span class="tag">📱 Samsung Galaxy A30 (A305)</span>
+                        <span class="tag">📱 Samsung Galaxy A50 (A505)</span>
+                        <span class="tag">📱 Samsung Galaxy A50s (A507)</span>
+                    </div>
+                </li>
+
+                <!-- 2. مجموعة Infinix Hot 11S / Tecno Camon 18 (الجديدة) -->
+                <li class="item-card infinix-item tecno-item">
+                    <div class="item-title">Infinix Hot 11S / Tecno Camon 18 Series</div>
+                    <div class="devices-tags">
+                        <span class="tag">📱 Infinix Hot 11S</span>
+                        <span class="tag">📱 Infinix Zero 5G</span>
+                        <span class="tag">📱 Infinix Hot 20S</span>
+                        <span class="tag">📱 Tecno Camon 18</span>
+                        <span class="tag">📱 Tecno Camon 18P</span>
+                        <span class="tag">📱 Tecno Camon 17P</span>
+                        <span class="tag">📱 Tecno Camon 19 Neo</span>
+                        <span class="tag">📱 Tecno Spark 8 Pro</span>
+                    </div>
+                </li>
+
+                <!-- 3. مجموعة Infinix Hot 30 Play -->
+                <li class="item-card infinix-item tecno-item itel-item">
+                    <div class="item-title">Infinix Hot 30 Play / Hot 12 Play Series</div>
+                    <div class="devices-tags">
+                        <span class="tag">📱 Infinix Hot 30 Play</span>
+                        <span class="tag">📱 Infinix Hot 12</span>
+                        <span class="tag">📱 Infinix Hot 12 Play</span>
+                        <span class="tag">📱 Infinix Hot 20</span>
+                        <span class="tag">📱 Infinix Hot 20 Play</span>
+                        <span class="tag">📱 Infinix Note 12i</span>
+                        <span class="tag">📱 Tecno Pova Neo 2</span>
+                        <span class="tag">📱 Tecno Pova Neo 3</span>
+                        <span class="tag">📱 Itel P40 Plus</span>
+                    </div>
+                </li>
+
+                <!-- 4. مجموعة Oppo A77s كاملة -->
+                <li class="item-card oppo-item">
+                    <div class="item-title">Oppo A77s / A78 5G Series</div>
+                    <div class="devices-tags">
+                        <span class="tag">📱 Oppo A77s</span>
+                        <span class="tag">📱 Oppo A77 4G / 5G</span>
+                        <span class="tag">📱 Oppo A57 4G (2022)</span>
+                        <span class="tag">📱 Oppo A57s / A57e / 5G</span>
+                        <span class="tag">📱 Oppo A78 5G</span>
+                        <span class="tag">📱 Oppo A58 5G</span>
+                        <span class="tag">📱 Oppo A17 / A17k</span>
+                        <span class="tag">📱 Oppo A18 / A38</span>
+                        <span class="tag">📱 OnePlus Nord N300</span>
+                    </div>
+                </li>
+
+                <!-- 5. مجموعة Realme C51 / C53 -->
+                <li class="item-card realme-item">
+                    <div class="item-title">Realme C51 / C53 / Note 50 Series</div>
+                    <div class="devices-tags">
+                        <span class="tag">📱 Realme C51</span>
+                        <span class="tag">📱 Realme C53 (4G / NFC)</span>
+                        <span class="tag">📱 Realme C60</span>
+                        <span class="tag">📱 Realme Note 50</span>
+                        <span class="tag">📱 Realme Narzo N53</span>
+                    </div>
+                </li>
+
+                <!-- 6. مجموعة Realme C35 -->
+                <li class="item-card realme-item">
+                    <div class="item-title">Realme C35 / C31 Group</div>
+                    <div class="devices-tags">
+                        <span class="tag">📱 Realme C35</span>
+                        <span class="tag">📱 Realme C31</span>
+                        <span class="tag">📱 Realme Narzo 50A Prime</span>
+                    </div>
+                </li>
+
+                <!-- 7. مجموعة Realme C55 & Oppo A58 4G -->
+                <li class="item-card realme-item oppo-item">
+                    <div class="item-title">Realme C55 / Oppo A58 4G Series</div>
+                    <div class="devices-tags">
+                        <span class="tag">📱 Realme C55</span>
+                        <span class="tag">📱 Realme C67 5G</span>
+                        <span class="tag">📱 Realme 11 5G</span>
+                        <span class="tag">📱 Oppo A79 5G</span>
+                        <span class="tag">📱 Oppo A58 4G</span>
+                        <span class="tag">📱 Oppo A98</span>
+                    </div>
+                </li>
+
+                <!-- 8. مجموعة Infinix Smart 8 / Spark 20 -->
+                <li class="item-card infinix-item tecno-item itel-item">
+                    <div class="item-title">Infinix Smart 8 / Spark 20 Group</div>
+                    <div class="devices-tags">
+                        <span class="tag">📱 Infinix Smart 8 / Pro</span>
+                        <span class="tag">📱 Infinix Hot 40i</span>
+                        <span class="tag">📱 Tecno Spark Go 2024</span>
+                        <span class="tag">📱 Tecno Pop 8</span>
+                        <span class="tag">📱 Tecno Spark 20 / 20C</span>
+                        <span class="tag">📱 Itel S24 / RS4</span>
+                    </div>
+                </li>
+
+                <!-- 9. مجموعة Redmi Note 12 / 13 -->
+                <li class="item-card xiaomi-item">
+                    <div class="item-title">Redmi Note 12 4G / Note 13 4G</div>
+                    <div class="devices-tags">
+                        <span class="tag">📱 Redmi Note 12 4G</span>
+                        <span class="tag">📱 Redmi Note 12S</span>
+                        <span class="tag">📱 Redmi Note 13 4G</span>
+                        <span class="tag">📱 Poco M6 Pro 4G</span>
+                    </div>
+                </li>
+
+                <!-- 10. مجموعة Samsung A12 -->
+                <li class="item-card samsung-item">
+                    <div class="item-title">Samsung A12 / A02s / M12</div>
+                    <div class="devices-tags">
+                        <span class="tag">📱 Samsung A12</span>
+                        <span class="tag">📱 Samsung A02s</span>
+                        <span class="tag">📱 Samsung M12</span>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentBrandKey = '';
+
+        function openBrand(brandKey, brandTitle) {
+            currentBrandKey = brandKey;
+            document.getElementById('modalTitle').innerText = brandTitle;
+            document.getElementById('modalSearchInput').value = '';
+            document.getElementById('brandModal').style.display = 'flex';
+            resetResults();
+        }
+
+        function closeModal() {
+            document.getElementById('brandModal').style.display = 'none';
+        }
+
+        function resetResults() {
+            const items = document.querySelectorAll('.item-card');
+            items.forEach(item => item.style.display = 'none');
+            document.getElementById('hintText').style.display = 'block';
+            document.getElementById('hintText').innerText = 'اكتب اسم الجهاز أو الشاشة في الأعلى لعرض التوافقات...';
+        }
+
+        function executeSearch() {
+            let rawQuery = document.getElementById('modalSearchInput').value.trim();
+            const brandItems = document.querySelectorAll(`.${currentBrandKey}-item`);
+            const hintText = document.getElementById('hintText');
+            let matchCount = 0;
+
+            if (rawQuery === '') {
+                resetResults();
+                return;
+            }
+
+            let searchKey = rawQuery.toLowerCase()
+                .replace(/انفنكس/g, "infinix")
+                .replace(/انفنيكس/g, "infinix")
+                .replace(/هوت/g, "hot")
+                .replace(/تيكنو/g, "tecno")
+                .replace(/تكنو/g, "tecno")
+                .replace(/أوبو/g, "oppo")
+                .replace(/اوبو/g, "oppo")
+                .replace(/ريلمي/g, "realme")
+                .replace(/ريدمي/g, "redmi")
+                .replace(/سامسونج/g, "samsung")
+                .replace(/ايتل/g, "itel");
+
+            const queryWords = searchKey.split(/\s+/);
+
+            brandItems.forEach(item => {
+                const itemText = item.textContent.toLowerCase();
+
+                const isMatch = queryWords.every(word => {
+                    if (!isNaN(word)) {
+                        const numRegex = new RegExp(`(?:^|\\b|\\s|\\D)${word}(?:$|\\b|\\s|\\D)`, 'i');
+                        return numRegex.test(itemText);
+                    }
+                    return itemText.includes(word);
+                });
+
+                if (isMatch) {
+                    item.style.display = 'block';
+                    matchCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            if (matchCount === 0) {
+                hintText.style.display = 'block';
+                hintText.innerText = 'لا توجد نتائج مطابقة للبحث!';
+            } else {
+                hintText.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
