@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -396,6 +397,30 @@
                 </div>
                 <i class="fa-solid fa-chevron-left arrow-icon"></i>
             </div>
+
+            <!-- هونر -->
+            <div class="brand-card" onclick="openBrand('honor', 'هونر (Honor)')">
+                <div class="brand-info">
+                    <div class="brand-icon-box" style="color: #0284c7;">H</div>
+                    <div class="brand-title-group">
+                        <span class="brand-name-ar">هونر</span>
+                        <span class="brand-name-en">Honor</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            </div>
+
+            <!-- هواوي -->
+            <div class="brand-card" onclick="openBrand('huawei', 'هواوي (Huawei)')">
+                <div class="brand-info">
+                    <div class="brand-icon-box" style="color: #ef4444;">HW</div>
+                    <div class="brand-title-group">
+                        <span class="brand-name-ar">هواوي</span>
+                        <span class="brand-name-en">Huawei</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-left arrow-icon"></i>
+            </div>
         </div>
     </div>
 
@@ -421,7 +446,7 @@
 
             <ul class="results-list" id="modalResultsList">
 
-                <!-- 1. مجموعة Samsung Galaxy A30 / A50 (الجديدة) -->
+                <!-- 1. مجموعة Samsung Galaxy A30 / A50 -->
                 <li class="item-card samsung-item">
                     <div class="item-title">Samsung Galaxy A30 / A50 / A50s Series</div>
                     <div class="devices-tags">
@@ -431,7 +456,7 @@
                     </div>
                 </li>
 
-                <!-- 2. مجموعة Infinix Hot 11S / Tecno Camon 18 (الجديدة) -->
+                <!-- 2. مجموعة Infinix Hot 11S / Tecno Camon 18 -->
                 <li class="item-card infinix-item tecno-item">
                     <div class="item-title">Infinix Hot 11S / Tecno Camon 18 Series</div>
                     <div class="devices-tags">
@@ -462,7 +487,7 @@
                     </div>
                 </li>
 
-                <!-- 4. مجموعة Oppo A77s كاملة -->
+                <!-- 4. مجموعة Oppo A77s -->
                 <li class="item-card oppo-item">
                     <div class="item-title">Oppo A77s / A78 5G Series</div>
                     <div class="devices-tags">
@@ -521,111 +546,4 @@
                         <span class="tag">📱 Infinix Hot 40i</span>
                         <span class="tag">📱 Tecno Spark Go 2024</span>
                         <span class="tag">📱 Tecno Pop 8</span>
-                        <span class="tag">📱 Tecno Spark 20 / 20C</span>
-                        <span class="tag">📱 Itel S24 / RS4</span>
-                    </div>
-                </li>
-
-                <!-- 9. مجموعة Redmi Note 12 / 13 -->
-                <li class="item-card xiaomi-item">
-                    <div class="item-title">Redmi Note 12 4G / Note 13 4G</div>
-                    <div class="devices-tags">
-                        <span class="tag">📱 Redmi Note 12 4G</span>
-                        <span class="tag">📱 Redmi Note 12S</span>
-                        <span class="tag">📱 Redmi Note 13 4G</span>
-                        <span class="tag">📱 Poco M6 Pro 4G</span>
-                    </div>
-                </li>
-
-                <!-- 10. مجموعة Samsung A12 -->
-                <li class="item-card samsung-item">
-                    <div class="item-title">Samsung A12 / A02s / M12</div>
-                    <div class="devices-tags">
-                        <span class="tag">📱 Samsung A12</span>
-                        <span class="tag">📱 Samsung A02s</span>
-                        <span class="tag">📱 Samsung M12</span>
-                    </div>
-                </li>
-
-            </ul>
-        </div>
-    </div>
-
-    <script>
-        let currentBrandKey = '';
-
-        function openBrand(brandKey, brandTitle) {
-            currentBrandKey = brandKey;
-            document.getElementById('modalTitle').innerText = brandTitle;
-            document.getElementById('modalSearchInput').value = '';
-            document.getElementById('brandModal').style.display = 'flex';
-            resetResults();
-        }
-
-        function closeModal() {
-            document.getElementById('brandModal').style.display = 'none';
-        }
-
-        function resetResults() {
-            const items = document.querySelectorAll('.item-card');
-            items.forEach(item => item.style.display = 'none');
-            document.getElementById('hintText').style.display = 'block';
-            document.getElementById('hintText').innerText = 'اكتب اسم الجهاز أو الشاشة في الأعلى لعرض التوافقات...';
-        }
-
-        function executeSearch() {
-            let rawQuery = document.getElementById('modalSearchInput').value.trim();
-            const brandItems = document.querySelectorAll(`.${currentBrandKey}-item`);
-            const hintText = document.getElementById('hintText');
-            let matchCount = 0;
-
-            if (rawQuery === '') {
-                resetResults();
-                return;
-            }
-
-            let searchKey = rawQuery.toLowerCase()
-                .replace(/انفنكس/g, "infinix")
-                .replace(/انفنيكس/g, "infinix")
-                .replace(/هوت/g, "hot")
-                .replace(/تيكنو/g, "tecno")
-                .replace(/تكنو/g, "tecno")
-                .replace(/أوبو/g, "oppo")
-                .replace(/اوبو/g, "oppo")
-                .replace(/ريلمي/g, "realme")
-                .replace(/ريدمي/g, "redmi")
-                .replace(/سامسونج/g, "samsung")
-                .replace(/ايتل/g, "itel");
-
-            const queryWords = searchKey.split(/\s+/);
-
-            brandItems.forEach(item => {
-                const itemText = item.textContent.toLowerCase();
-
-                const isMatch = queryWords.every(word => {
-                    if (!isNaN(word)) {
-                        const numRegex = new RegExp(`(?:^|\\b|\\s|\\D)${word}(?:$|\\b|\\s|\\D)`, 'i');
-                        return numRegex.test(itemText);
-                    }
-                    return itemText.includes(word);
-                });
-
-                if (isMatch) {
-                    item.style.display = 'block';
-                    matchCount++;
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-
-            if (matchCount === 0) {
-                hintText.style.display = 'block';
-                hintText.innerText = 'لا توجد نتائج مطابقة للبحث!';
-            } else {
-                hintText.style.display = 'none';
-            }
-        }
-        </script>
-<img src="https://api.counterapi.dev/v2/558670mhmd_guide/up" style="display:none;" alt="stats">
-</body>
-</html>
+                   
