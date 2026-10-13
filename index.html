@@ -3,877 +3,540 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محمد فون Pro - ورشة الصيانة المتكاملة</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <title>منظومة محمد فون - النسخة الاحترافية الشاملة 🖥️</title>
+    <!-- مكتبات Firebase الأساسية -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
-        :root {
-            --bg-color: #f1f5f9;
-            --card-bg: #ffffff;
-            --primary-accent: #0284c7;
-            --primary-hover: #0369a1;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            --modal-bg: #ffffff;
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+
+        :root { 
+            --primary: #0f172a; 
+            --accent: #3b82f6; 
+            --bg: #f8fafc; 
+            --success: #10b981; 
+            --card-border: #e2e8f0;
         }
 
-        body.dark-mode {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --primary-accent: #38bdf8;
-            --primary-hover: #0284c7;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-            --modal-bg: #1e293b;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); font-family: 'Tajawal', sans-serif; direction: rtl; color: #0f172a; }
+
+        /* ===== واجهة دخول فنتكشاسية فاخرة (Glassmorphism) ===== */
+        #auth-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: radial-gradient(circle at 20% 20%, #1e1b4b 0%, #090d16 50%, #030712 100%); 
+            z-index: 999999; display: flex; justify-content: center; align-items: center; padding: 20px; 
+            overflow: hidden;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+        .glow-circle-1 {
+            position: absolute; width: 350px; height: 350px; background: rgba(99, 102, 241, 0.35);
+            filter: blur(90px); border-radius: 50%; top: 10%; left: 15%;
+            animation: floatGlow 8s infinite alternate ease-in-out;
+        }
+        .glow-circle-2 {
+            position: absolute; width: 300px; height: 300px; background: rgba(236, 72, 153, 0.25);
+            filter: blur(90px); border-radius: 50%; bottom: 10%; right: 15%;
+            animation: floatGlow 6s infinite alternate ease-in-out;
+        }
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, -30px) scale(1.1); }
+        }
 
-        #loginOverlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-color); z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .login-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px; width: 100%; max-width: 400px; box-shadow: var(--shadow); text-align: center; }
-        .login-title { font-size: 1.4rem; font-weight: 900; color: var(--primary-accent); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .auth-card { 
+            position: relative;
+            background: rgba(15, 23, 42, 0.85); 
+            padding: 40px 30px; 
+            border-radius: 28px; 
+            width: 100%; max-width: 440px; 
+            text-align: center; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.2); 
+            border: 1px solid rgba(255, 255, 255, 0.12); 
+            backdrop-filter: blur(25px);
+            color: #fff; 
+        }
 
-        .top-nav { background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top:0; z-index: 100; }
-        .logo-title { font-weight: 900; font-size: 1.1rem; color: var(--primary-accent); display: flex; align-items: center; gap: 8px; }
-        .nav-actions { display: flex; align-items: center; gap: 10px; }
+        .auth-logo {
+            width: 75px; height: 75px; margin: 0 auto 15px;
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+            border-radius: 22px; display: flex; justify-content: center; align-items: center;
+            font-size: 38px; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .auth-card h2 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+        .auth-card p.subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 25px; }
+
+        .auth-card input { 
+            width: 100%; padding: 14px 16px; 
+            background: rgba(30, 41, 59, 0.8); 
+            color: #fff; border: 1px solid rgba(255, 255, 255, 0.15); 
+            border-radius: 12px; margin-bottom: 14px; outline: none; font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        .auth-card input:focus { 
+            border-color: #6366f1; background: rgba(30, 41, 59, 0.95);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-auth-main { 
+            background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%); 
+            padding: 14px; border: none; border-radius: 12px; color: #fff; 
+            font-weight: 700; font-size: 15px; width: 100%; cursor: pointer; 
+            margin-top: 5px; box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .btn-auth-main:active { transform: scale(0.98); }
+
+        .btn-auth-sub { 
+            background: transparent; border: 1px dashed rgba(255, 255, 255, 0.3); 
+            color: #cbd5e1; padding: 10px; border-radius: 10px; font-size: 13px; 
+            width: 100%; cursor: pointer; margin-top: 15px; font-family: inherit;
+        }
+
+        /* ===== واجهة المنظومة الرئيسية ===== */
+        .container { max-width: 1800px; margin: auto; padding: 15px; }
+        .header { 
+            background: linear-gradient(135deg, #0f172a, #1e293b); 
+            color: white; padding: 18px 25px; border-radius: 20px; 
+            margin-bottom: 20px; display: flex; justify-content: space-between; 
+            align-items: center; flex-wrap: wrap; gap: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .store-selector-bar { 
+            background: #fff; padding: 15px 20px; border-radius: 16px; 
+            margin-bottom: 20px; border: 1px solid var(--card-border); 
+            display: flex; align-items: center; gap: 15px; flex-wrap: wrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .store-selector-bar select { 
+            padding: 10px 15px; background: #0f172a; color: #38bdf8; 
+            border: 1px solid #334155; border-radius: 10px; font-weight: bold; 
+            font-size: 15px; flex: 1; min-width: 260px; outline: none; cursor: pointer;
+            font-family: inherit;
+        }
+
+        .barcode-sell-zone { 
+            background: #fff; padding: 20px; border-radius: 16px; margin-bottom: 20px; 
+            border: 2px dashed #3b82f6; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        #quick-barcode { 
+            width: 100%; max-width: 500px; padding: 12px 20px; font-size: 20px; 
+            border-radius: 12px; border: 2px solid #3b82f6; text-align: center; 
+            background: #eff6ff; font-weight: bold; outline: none; font-family: inherit;
+        }
+
+        .sections-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .section-card { 
+            background: #fff; border-radius: 18px; padding: 20px; 
+            border-top: 6px solid var(--primary); 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04); border-left: 1px solid var(--card-border);
+            border-right: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);
+        }
+
+        .profit-badge { 
+            font-size: 15px; font-weight: bold; padding: 10px 14px; 
+            background: #f8fafc; border-radius: 12px; display: flex; 
+            justify-content: space-between; margin-bottom: 15px; border: 1px solid #e2e8f0; color: #0f172a; 
+        }
+
+        .input-group { display: flex; gap: 6px; margin-bottom: 8px; }
+        input { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; width: 100%; font-size: 13px; font-family: inherit; }
         
-        .theme-toggle-btn, .logout-btn { background: var(--border-color); border: none; padding: 8px 12px; border-radius: 12px; color: var(--text-main); font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.8rem; }
-        .logout-btn { background: #ef4444; color: white; }
+        .btn { padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; width: 100%; margin-top: 5px; font-family: inherit; }
+        .btn-add { background: #0f172a; }
+        .btn-sell { background: var(--success); font-size: 13px; height: 32px; width: auto; padding: 0 14px; }
 
-        .container { max-width: 650px; margin: 15px auto; width: 100%; flex: 1; padding: 0 15px; }
+        .table-wrap { height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; margin-top: 15px; border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 10px 8px; border-bottom: 1px solid #f1f5f9; text-align: center; }
+        th { background: #f8fafc; position: sticky; top: 0; color: #475569; font-weight: 700; }
 
-        .icon-nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-        .nav-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 12px 8px; text-align: center; cursor: pointer; box-shadow: var(--shadow); transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
-        .nav-card.active { border-color: var(--primary-accent); background: rgba(2, 132, 199, 0.08); }
-        .nav-card i { font-size: 1.4rem; color: var(--primary-accent); }
-        .nav-card span { font-size: 0.78rem; font-weight: 800; color: var(--text-main); }
-
-        .section-box { display: none; background: var(--card-bg); border-radius: 18px; border: 1px solid var(--border-color); padding: 18px; margin-bottom: 15px; box-shadow: var(--shadow); }
-        .section-box.active { display: block; }
-        .section-title { font-weight: 800; font-size: 1rem; color: var(--primary-accent); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-
-        .calc-input, .receipt-input, select { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border-color); outline: none; margin-bottom: 10px; font-weight: 700; background: var(--bg-color); color: var(--text-main); font-size: 0.9rem; }
-        .btn-action { background: var(--primary-accent); color: white; border: none; padding: 12px 16px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 4px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 0.9rem; }
-
-        .price-card, .item-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .price-badge { background: var(--primary-accent); color: white; padding: 6px 12px; border-radius: 10px; font-weight: 800; font-size: 0.85rem; }
-
-        .bga-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
-        .bga-table th, .bga-table td { border: 1px solid var(--border-color); padding: 8px; text-align: center; }
-        .bga-table th { background: var(--bg-color); color: var(--primary-accent); }
-
-        .full-screen-test { position: fixed; top:0; left:0; width:100vw; height:100vh; z-index: 2000; display:none; justify-content:center; align-items:center; color:white; font-size:1.5rem; font-weight:bold; cursor:pointer; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; padding: 15px; z-index: 1000; }
-        .modal-card { background: var(--modal-bg); border-radius: 24px; width: 100%; max-width: 520px; padding: 22px; border: 1px solid var(--border-color); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        .close-btn { background: var(--bg-color); border: none; color: var(--text-muted); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; }
-
-        .diag-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
-        .diag-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; text-align: center; }
-        .diag-card label { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; }
-        .diag-card val { font-size: 1.1rem; font-weight: 900; color: var(--primary-accent); }
-
-        .mic-meter-container { background: var(--bg-color); height: 20px; border-radius: 10px; border: 1px solid var(--border-color); overflow: hidden; margin: 12px 0; }
-        .mic-meter-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444); transition: width 0.05s ease; }
-
-        /* ستايل كارت تفعيل أدوات السوفتوير المطابق للصورة */
-        .promo-activation-card {
-            background: #111827;
-            color: #ffffff;
-            border-radius: 18px;
-            padding: 18px;
-            margin-top: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            border: 1px solid #374151;
-            text-decoration: none;
-            display: block;
-            transition: transform 0.2s ease;
-        }
-        .promo-activation-card:hover {
-            transform: translateY(-2px);
-        }
-        .promo-content-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-        }
-        .promo-left-badge {
-            background: #0284c7;
-            color: #ffffff;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-weight: 900;
-            font-size: 1rem;
-            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
-            white-space: nowrap;
-        }
-        .promo-right-texts {
-            text-align: right;
-            flex: 1;
-        }
-        .promo-title-main {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #ffffff;
-            line-height: 1.5;
-        }
-        .promo-subtitle {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            margin-top: 4px;
-            font-family: monospace;
-            letter-spacing: 0.5px;
-        }
-        .promo-footer-note {
-            text-align: center;
-            font-size: 0.78rem;
-            color: #94a3b8;
-            margin-top: 12px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        footer { margin-top: 30px; text-align: center; padding: 20px; border-top: 1px solid var(--border-color); font-size: 0.85rem; }
+        .log-section { background: white; padding: 20px; margin-top: 25px; border-radius: 18px; border: 1px solid var(--card-border); box-shadow: 0 8px 20px rgba(0,0,0,0.03); }
+        .logout-btn { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; font-family: inherit; }
     </style>
 </head>
 <body>
 
-    <div id="loginOverlay">
-        <div class="login-card">
-            <div class="login-title">
-                <i class="fa-solid fa-screwdriver-wrench"></i> محمد فون Pro
-            </div>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;" id="authDesc">تسجيل الدخول للوصول للورشة</p>
-            <input type="text" id="loginUser" class="calc-input" placeholder="اسم المستخدم (اليوزر)">
-            <input type="password" id="loginPass" class="calc-input" placeholder="كلمة المرور">
-            <button class="btn-action" id="authBtn" onclick="handleAuth()"><i class="fa-solid fa-right-to-bracket"></i> دخول التطبيق</button>
-            <button class="btn-action" style="background:transparent; color:var(--text-muted); border:1px solid var(--border-color); margin-top:8px;" onclick="toggleAuthMode()" id="toggleAuthBtn">طلب حساب جديد</button>
-            <p id="loginError" style="color: #ef4444; font-size: 0.8rem; margin-top: 10px; display: none;"></p>
+<!-- واجهة دخول فنتكشاسية فاخرة -->
+<div id="auth-overlay">
+    <div class="glow-circle-1"></div>
+    <div class="glow-circle-2"></div>
+    
+    <div class="auth-card">
+        <div class="auth-logo">💎</div>
+        <h2>منظومة محمد فون</h2>
+        <p class="subtitle">النظام التجاري الأكثر ثباتاً وإدارة للمخزون المتقدم</p>
+        
+        <!-- نموذج تسجيل الدخول -->
+        <div id="login-form-area">
+            <input type="email" id="auth-email" placeholder="البريد الإلكتروني" autocomplete="email">
+            <input type="password" id="auth-password" placeholder="كلمة السر" autocomplete="current-password">
+            <button class="btn-auth-main" id="btnLogin" type="button">تسجيل الدخول 🚀</button>
+            <button class="btn-auth-sub" id="btnRegToggle" type="button">إنشاء حساب جديد 📝</button>
+        </div>
+
+        <!-- نموذج إنشاء حساب جديد -->
+        <div id="register-form-area" style="display:none;">
+            <p style="color:#38bdf8; font-size:12px; margin-bottom:12px;">أنشئ حسابك وسيتم إرسال الطلب إلى pending_requests للإدارة:</p>
+            <input type="email" id="reg-email" placeholder="البريد الإلكتروني الجديد">
+            <input type="password" id="reg-password" placeholder="كلمة السر الجديدة">
+            <button class="btn-auth-main" id="btnRegSubmit" type="button" style="background: linear-gradient(135deg, #10b981, #059669);">إرسال طلب التسجيل ⚡</button>
+            <button class="btn-auth-sub" id="btnRegBack" type="button">العودة لتسجيل الدخول 🔙</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1 style="font-size:20px; margin:0;">💻 منظومة محمد فون - النسخة متعددة الأنشطة التجاريّة</h1>
+        <div>
+            <span id="userEmailDisplay" style="font-size: 13px; color: #fbbf24; margin-left: 10px; font-weight:bold;"></span>
+            <button class="logout-btn" id="btnLogout" type="button">تسجيل الخروج 🚪</button>
         </div>
     </div>
 
-    <div class="top-nav">
-        <div class="logo-title">
-            <i class="fa-solid fa-screwdriver-wrench"></i> محمد فون Pro
-        </div>
-        <div class="nav-actions">
-            <span id="welcomeUser" style="font-size:0.8rem; font-weight:700;"></span>
-            <button class="theme-toggle-btn" onclick="toggleDarkMode()">
-                <i class="fa-solid fa-moon" id="themeIcon"></i>
-            </button>
-            <button class="logout-btn" onclick="handleLogout()">
-                <i class="fa-solid fa-power-off"></i>
-            </button>
-        </div>
+    <!-- شريط تحديد نوع النشاط التجاري لتوليد الأقسام المناسبة -->
+    <div class="store-selector-bar">
+        <label for="storeTypeSelect" style="font-weight: 800; font-size: 15px; color:#0f172a;">🏪 حدد نوع نشاط متجرك لتوليد الخانات المخصصة:</label>
+        <select id="storeTypeSelect">
+            <option value="mobiles">📱 متجر الموبايلات والصيانة والإكسسوارات</option>
+            <option value="cosmetics">💄 الكوزمتك والعناية والجمال والمكياج</option>
+            <option value="clothes">👕 الملابس والأزياء والأحذية</option>
+            <option value="grocery">🥫 السوبرماركت والمواد الغذائية</option>
+            <option value="stationery">📚 المكتبة والقرطاسية والمستلزمات</option>
+        </select>
     </div>
 
-    <div class="container">
+    <div class="barcode-sell-zone">
+        <label style="display:block; margin-bottom:8px; font-weight:bold; color:#1e40af;">⚡ مسح باركود للبيع الفوري الكاسير:</label>
+        <input type="text" id="quick-barcode" placeholder="ضع المؤشر هنا وامسح كود القطعة بالقارئ..." autofocus>
+    </div>
 
-        <!-- الشبكة العلوية بدون خانة تفعيل البرامج -->
-        <div class="icon-nav-grid">
-            <div class="nav-card active" onclick="switchSection('imeiSec', this)">
-                <i class="fa-solid fa-barcode"></i>
-                <span>فاحص IMEI</span>
-            </div>
-            <div class="nav-card" onclick="switchSection('micSec', this)">
-                <i class="fa-solid fa-microphone-lines"></i>
-                <span>فاحص المايكات</span>
-            </div>
-            <div class="nav-card" onclick="switchSection('panicSec', this)">
-                <i class="fa-brands fa-apple"></i>
-                <span>محلل Panic</span>
-            </div>
-            <div class="nav-card" onclick="switchSection('chargeTestSec', this)">
-                <i class="fa-solid fa-bolt"></i>
-                <span>فاحص الشحن</span>
-            </div>
-            <div class="nav-card" onclick="switchSection('pricesSec', this)">
-                <i class="fa-solid fa-tag"></i>
-                <span>أسعار الشاشات</span>
-            </div>
-            <div class="nav-card" onclick="switchSection('compatSec', this)">
-                <i class="fa-solid fa-mobile-screen"></i>
-                <span>التوافقات</span>
-            </div>
-            <div class="nav-card" onclick="switchSection('diodeSec', this)">
-                <i class="fa-solid fa-wave-square"></i>
-                <span>الممانعات</span>
-            </div>
-            <div class="nav-card" onclick="switchSection('bgaSec', this)">
-                <i class="fa-solid fa-fire-burner"></i>
-                <span>دليل الحرارة</span>
-            </div>
-            <div class="nav-card" onclick="switchSection('testerSec', this)">
-                <i class="fa-solid fa-expand"></i>
-                <span>فاحص الشاشة</span>
-            </div>
-            <div class="nav-card" onclick="switchSection('receiptSec', this)">
-                <i class="fa-solid fa-receipt"></i>
-                <span>إنشاء وصل</span>
-            </div>
-            <div class="nav-card" id="usersTabBtn" onclick="switchSection('usersSec', this)" style="display:none; background:#0284c7; color:white;">
-                <i class="fa-solid fa-users-gear" style="color:white;"></i>
-                <span style="color:white;">تفعيل المشتركين</span>
-            </div>
-        </div>
+    <!-- شبكة الأقسام تتولد ديناميكياً -->
+    <div class="sections-grid" id="mainGrid"></div>
 
-        <!-- فاحص الـ IMEI والموديل -->
-        <div id="imeiSec" class="section-box active">
-            <div class="section-title"><i class="fa-solid fa-barcode"></i> فاحص الأجهزة المفرمتة عن طريق الـ IMEI</div>
-            <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:10px;">ادخل الـ IMEI المكون من 15 رقماً لمعرفة الموديل والمعالج ووضع السوفتوير المناسب:</p>
-            <input type="number" id="imeiInput" class="calc-input" placeholder="ادخل رقم الـ IMEI هنا (15 رقم)" maxlength="15" oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);">
-            <button class="btn-action" onclick="analyzeIMEI()"><i class="fa-solid fa-magnifying-glass"></i> تحليل وقراءة بيانات الجهاز</button>
-
-            <div id="imeiResult" style="margin-top: 15px; display: none;">
-                <div class="diag-grid">
-                    <div class="diag-card">
-                        <label>الموديل والتسمية</label>
-                        <val id="imeiModelName" style="font-size:0.95rem;">--</val>
-                    </div>
-                    <div class="diag-card">
-                        <label>نوع المعالج (Chipset)</label>
-                        <val id="imeiCpu" style="font-size:0.95rem;">--</val>
-                    </div>
-                    <div class="diag-card">
-                        <label>إصدار الاندرويد المتوقع</label>
-                        <val id="imeiAndroid">--</val>
-                    </div>
-                    <div class="diag-card">
-                        <label>وضع التوصيل للتخطي</label>
-                        <val id="imeiMode" style="font-size:0.85rem; color:#f59e0b;">--</val>
-                    </div>
-                </div>
-
-                <div id="imeiExtraInfo" style="margin-top: 12px; padding: 12px; background: var(--bg-color); border-radius: 12px; font-size: 0.85rem; border-right: 4px solid var(--primary-accent);">
-                    <strong>توصيات السوفتوير والتخطي:</strong>
-                    <p id="imeiSoftwareTip" style="margin-top:4px; line-height:1.5; color:var(--text-muted);"></p>
-                </div>
-
-                <button class="btn-action" style="margin-top:10px; background:#10b981;" onclick="transferImeiToReceipt()"><i class="fa-solid fa-file-export"></i> نقل البيانات مباشرة إلى وصل الصيانة</button>
-            </div>
-        </div>
-
-        <!-- فاحص المايكات الذكي مع التشخيص الفوري -->
-        <div id="micSec" class="section-box">
-            <div class="section-title"><i class="fa-solid fa-microphone-lines"></i> فاحص المايكات واكتشاف الصوت الحي مع التشخيص</div>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">اختر المايك المراد فحصه، ثم تكلم بوضوح للتحقق من وصول الصوت وتشخيص العطل بدقة:</p>
-
-            <select id="micTargetSelect" class="calc-input">
-                <option value="bottom">مايك المكالمات الرئيسي (المايك السفلي - Mic1 / فلاتة الشحن)</option>
-                <option value="top">مايك الميديا والسبيكر (المايك العلوي - Mic2 / فلاتة السماعة)</option>
-            </select>
-
-            <button class="btn-action" id="startMicBtn" onclick="toggleMicTest()"><i class="fa-solid fa-microphone"></i> بدء فحص المايك الحي</button>
-
-            <div id="micDiagBox" style="display:none; margin-top:15px;">
-                <small style="font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 4px;">مؤشر التردد وتدفق الصوت الحي:</small>
-                <div class="mic-meter-container">
-                    <div id="micMeterBar" class="mic-meter-bar"></div>
-                </div>
-
-                <div class="diag-grid">
-                    <div class="diag-card">
-                        <label>حالة المايك</label>
-                        <val id="micStatusVal" style="color:#10b981;">جاري الاستماع...</val>
-                    </div>
-                    <div class="diag-card">
-                        <label>أعلى مستوى صوت</label>
-                        <val id="micPeakVal">0 %</val>
-                    </div>
-                </div>
-
-                <div id="micReportBox" style="margin-top: 12px; padding: 14px; background: var(--bg-color); border-radius: 12px; font-size: 0.88rem; border-right: 4px solid var(--primary-accent);">
-                    <div style="font-weight: 800; color: var(--primary-accent); margin-bottom: 6px;">تشخيص عطل المايك الفوري:</div>
-                    <div id="micReportText" style="line-height:1.6;">تكلم الآن بالقرب من الجهاز للتحقق من الاستجابة وتشخيص القطعة التالفة...</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- محلل Panic Full -->
-        <div id="panicSec" class="section-box">
-            <div class="section-title"><i class="fa-brands fa-apple"></i> محلل وقارئ أكواد iPhone Panic Full</div>
-            <textarea id="panicLogInput" class="receipt-input" rows="4" placeholder="انسخ نص الـ Panic Full هنا..." style="font-family:monospace; font-size:0.8rem; direction:ltr; text-align:left;"></textarea>
-            
-            <select id="quickPanicSelect" class="calc-input" onchange="applyQuickPanicCode(this.value)">
-                <option value="">-- أو اختر الكود المسبب مباشرة --</option>
-                <option value="Kernel data abort">Kernel Data Abort (خطأ الذاكرة NAND / المعالج)</option>
-                <option value="Prs0">Prs0 (حساس الضغط الجوي / البارومتر)</option>
-                <option value="SMC_AP_THERM">SMC_AP_THERM / Thermal (حساس الحرارة)</option>
-                <option value="Mic1">Mic1 (المايك السفلي بفلاتة الشحن)</option>
-                <option value="Mic2">Mic2 (المايك العلوي بفلاتة السماعة)</option>
-                <option value="AOP">AOP (حساس التقارب والبروكسمتي)</option>
-                <option value="GasGauge">GasGauge / SWI / BSI (خط بيانات البطارية)</option>
-                <option value="I2C">I2C0 / I2C1 / I2C2 (مسارات التوصيل الرقمية)</option>
-                <option value="NAND">NAND / NVMe (ذاكرة التخزين الرئيسية)</option>
-                <option value="SEP">SEP (معالج الحماية - Face ID / البصمة)</option>
-                <option value="Watchdog">Watchdog / WDT (تجمد وتعليق المعالج)</option>
-            </select>
-
-            <button class="btn-action" onclick="analyzePanicLog()"><i class="fa-solid fa-magnifying-glass-chart"></i> تحليل الكود تلقائياً</button>
-
-            <div id="panicResult" style="margin-top: 12px; padding: 14px; background: var(--bg-color); border-radius: 12px; display: none; font-size:0.88rem; border-right:4px solid var(--primary-accent);">
-                <div style="font-weight: 800; color: var(--primary-accent); margin-bottom: 6px;" id="panicCauseTitle">التشخيص:</div>
-                <div id="panicCauseDesc" style="line-height:1.6;"></div>
-            </div>
-        </div>
-
-        <!-- فاحص الشحن الذكي مع التشخيص المتقدم -->
-        <div id="chargeTestSec" class="section-box">
-            <div class="section-title"><i class="fa-solid fa-bolt"></i> فاحص الشحن الاحترافي مع التشخيص الشامل</div>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">قم بربط الجهاز واضغط تشغيل لمراقبة تيار الشحن وفحص كفاءة دائرة الطاقة والبطارية.</p>
-
-            <button class="btn-action" onclick="runAdvancedChargingTest()"><i class="fa-solid fa-microchip"></i> تشغيل الفحص والتشخيص الحي</button>
-
-            <div id="diagDashboard" style="display:none; margin-top:15px;">
-                <div class="diag-grid">
-                    <div class="diag-card">
-                        <label>حالة الاتصال والكيبل</label>
-                        <val id="valConn" style="font-size:0.85rem;">--</val>
-                    </div>
-                    <div class="diag-card">
-                        <label>نسبة الشحن الحالية</label>
-                        <val id="valLevel">--%</val>
-                    </div>
-                    <div class="diag-card">
-                        <label>صحة البطارية والبطاقة</label>
-                        <val id="valHealth" style="color: #22c55e; font-size:0.9rem;">ممتازة</val>
-                    </div>
-                    <div class="diag-card">
-                        <label>الوقت المتوقع للتمام</label>
-                        <val id="valTime" style="font-size:0.85rem;">--</val>
-                    </div>
-                </div>
-
-                <div id="chargeReportBox" style="margin-top: 12px; padding: 14px; background: var(--bg-color); border-radius: 12px; font-size: 0.88rem; border-right: 4px solid #10b981;">
-                    <div style="font-weight: 800; color: #10b981; margin-bottom: 6px;">تقرير وتشخيص دائرة الشحن:</div>
-                    <div id="chargeReportText" style="line-height:1.6; color:var(--text-main);">جاري تحليل سحب الأمبير واستقرار الفولتية...</div>
-                </div>
-
-                <div style="margin-top: 15px; background: var(--bg-color); border-radius: 14px; padding: 10px;">
-                    <canvas id="chargeChart" style="max-height: 160px; width: 100%;"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- أسعار الشاشات -->
-        <div id="pricesSec" class="section-box">
-            <div class="section-title"><i class="fa-solid fa-tag"></i> أسعار تبديل الشاشات في الورشة</div>
-            <input type="text" id="priceSearchInput" class="calc-input" placeholder="اكتب اسم أو موديل الجهاز للبحث..." onkeyup="searchScreenPrices()">
-            <div id="pricesListContainer" style="margin-top: 10px;"></div>
-        </div>
-
-        <!-- التوافقات -->
-        <div id="compatSec" class="section-box">
-            <div class="section-title"><i class="fa-solid fa-mobile-screen"></i> دليل التوافقات والقطع المتكامل</div>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">اختر الفئة لعرض البدائل المضمونة:</p>
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
-                <button class="btn-action" onclick="openBrandModal('samsung', 'توافقات شاشات سامسونج')">سامسونج</button>
-                <button class="btn-action" onclick="openBrandModal('xiaomi', 'توافقات شاشات شاومي')">شاومي / ردمي</button>
-                <button class="btn-action" onclick="openBrandModal('huawei', 'توافقات هواوي وهونر')">هواوي / هونر</button>
-                <button class="btn-action" onclick="openBrandModal('infinix', 'توافقات انفنكس / تكنو')">انفنكس / تكنو</button>
-                <button class="btn-action" onclick="openBrandModal('batteries', 'البطاريات البديلة المتوافقة')">البطاريات البديلة</button>
-                <button class="btn-action" onclick="openBrandModal('charging', 'بوردات الشحن المتطابقة')">بوردات الشحن</button>
-            </div>
-        </div>
-
-        <!-- الممانعات -->
-        <div id="diodeSec" class="section-box">
-            <div class="section-title"><i class="fa-solid fa-wave-square"></i> جدول قيم الممانعات الأساسية</div>
-            <table class="bga-table">
-                <tr><th>المسار / الخط الرئيسي</th><th>القيم المقبولة (V)</th></tr>
-                <tr><td>VPH_PWR / VBAT</td><td>0.350 - 0.450 V</td></tr>
-                <tr><td>USB_DP / USB_DM</td><td>0.600 - 0.750 V</td></tr>
-                <tr><td>LCD_BIAS / VSP / VSN</td><td>0.400 - 0.550 V</td></tr>
-                <tr><td>PP_CPU / GPU Line</td><td>0.080 - 0.180 V (منخفض طبيعي)</td></tr>
+    <!-- سجل مبيعات اليوم -->
+    <div class="log-section">
+        <h2 style="font-size: 18px; margin-bottom: 12px; color:#0f172a;">📄 سجل مبيعات اليوم والأرباح</h2>
+        <div class="table-wrap">
+            <table id="salesLog">
+                <thead>
+                    <tr>
+                        <th>المادة</th>
+                        <th>القسم</th>
+                        <th>الربح الصافي</th>
+                        <th>الوقت</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
             </table>
         </div>
-
-        <!-- دليل الحرارة BGA -->
-        <div id="bgaSec" class="section-box">
-            <div class="section-title"><i class="fa-solid fa-fire-burner"></i> درجات الحرارة القياسية للشرائح والهوت أير</div>
-            <table class="bga-table">
-                <tr><th>العملية أو القطعة</th><th>درجة الهوت أير (°C)</th></tr>
-                <tr><td>رفع المعالج المحمي (CPU Glue)</td><td>340 - 360 °C</td></tr>
-                <tr><td>تنظيف الشبلنة وقصدير BGA</td><td>300 - 320 °C</td></tr>
-                <tr><td>كونيكتور شاشة / كاميرا / فلاتة</td><td>280 - 300 °C</td></tr>
-                <tr><td>فك شريحة آي سي صوت / طاقة</td><td>330 - 350 °C</td></tr>
-            </table>
-        </div>
-
-        <!-- فاحص الشاشة -->
-        <div id="testerSec" class="section-box">
-            <div class="section-title"><i class="fa-solid fa-expand"></i> فاحص الشاشات والألوان (تست تاتش وألوان)</div>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">اختر اللون لاختبار الشاشة بالكامل وكشف بقع التخدش أو بكسلات الموت:</p>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                <button class="btn-action" style="background:#ef4444;" onclick="startColorTest('#ef4444')">أحمر</button>
-                <button class="btn-action" style="background:#22c55e;" onclick="startColorTest('#22c55e')">أخضر</button>
-                <button class="btn-action" style="background:#3b82f6;" onclick="startColorTest('#3b82f6')">أزرق</button>
-                <button class="btn-action" style="background:#ffffff; color:#000;" onclick="startColorTest('#ffffff')">أبيض</button>
-                <button class="btn-action" style="background:#000000;" onclick="startColorTest('#000000')">أسود</button>
-                <button class="btn-action" style="background:#eab308;" onclick="startColorTest('#eab308')">أصفر</button>
-            </div>
-        </div>
-
-        <!-- إنشاء وصل -->
-        <div id="receiptSec" class="section-box">
-            <div class="section-title"><i class="fa-solid fa-receipt"></i> نظام إنشاء وصولات الصيانة الاحترافية</div>
-            <input type="text" id="custName" class="calc-input" placeholder="اسم الزبون الكريم">
-            <input type="text" id="devModel" class="calc-input" placeholder="نوع الجهاز أو موديله">
-            <input type="text" id="repairFault" class="calc-input" placeholder="العطل أو الصيانة المطلوبة">
-            <input type="number" id="repairCost" class="calc-input" placeholder="الكلفة الإجمالية (د.ع)">
-            <button class="btn-action" onclick="printReceipt()"><i class="fa-solid fa-print"></i> معاينة وطباعة الوصل</button>
-        </div>
-
-        <!-- تفعيل المشتركين (لوحة الإدارة) -->
-        <div id="usersSec" class="section-box">
-            <div class="section-title"><i class="fa-solid fa-users-gear"></i> إدارة وحسابات المشتركين</div>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">إنشاء حسابات جديدة للفنيين وإدارة صلاحيات الورشة:</p>
-            <input type="text" id="newRegUser" class="calc-input" placeholder="اسم المستخدم الجديد">
-            <input type="password" id="newRegPass" class="calc-input" placeholder="كلمة المرور">
-            <select id="newRegRole" class="calc-input">
-                <option value="tech">فني صيانة</option>
-                <option value="admin">مسؤول رئيسي (Admin)</option>
-            </select>
-            <button class="btn-action" style="background:#10b981;" onclick="registerNewUser()"><i class="fa-solid fa-user-plus"></i> إضافة حساب فني جديد</button>
-            <div id="usersListContainer" style="margin-top: 15px;"></div>
-        </div>
-
-        <!-- كارت تفعيل أدوات السوفتوير الاحترافية برقم الواتساب الصحيح -->
-        <a href="https://wa.me/9647766501022?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%A3%D8%AF%D9%88%D8%A7%D8%AA%20%D8%A7%D9%84%D8%B3%D9%88%D9%81%D8%AA%D9%88%D9%8A%D8%B1%20%D8%A7%D9%84%D8%A7%D8%AD%D8%AA%D8%B1%D8%A7%D9%81%D9%8A%D8%A9" target="_blank" class="promo-activation-card">
-            <div class="promo-content-wrapper">
-                <div class="promo-left-badge">5$</div>
-                <div class="promo-right-texts">
-                    <div class="promo-title-main">تفعيل أدوات السوفتوير الاحترافية</div>
-                    <div class="promo-subtitle">UFED &amp; Oxygen &amp; MOBILedit</div>
-                </div>
-            </div>
-            <div class="promo-footer-note">
-                اضغط على الكارت أعلاه للانتقال المباشر إلى واتساب لإتمام التفعيل الفوري.
-            </div>
-        </a>
-
     </div>
+</div>
 
-    <div id="fullScreenTester" class="full-screen-test" onclick="this.style.display='none'">
-        <div style="text-align: center;">
-            <p>انقر في أي مكان للخروج من اختبار الشاشة</p>
-        </div>
-    </div>
+<script>
+    // إعدادات Firebase الخاصة بك
+    const firebaseConfig = {
+        apiKey: "AIzaSyAlQK9UKjFRDB4InB1J_DmkH2hTGppRhLQ",
+        authDomain: "mhmd-foon-7caee.firebaseapp.com",
+        databaseURL: "https://mhmd-foon-7caee-default-rtdb.firebaseio.com",
+        projectId: "mhmd-foon-7caee",
+        storageBucket: "mhmd-foon-7caee.firebasestorage.app",
+        messagingSenderId: "522907699898",
+        appId: "1:522907699898:web:f09b1c68be7d0c4b609083",
+        measurementId: "G-0BVQ3WW7VL"
+    };
 
-    <div class="modal-overlay" id="brandModal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <div style="font-weight:800; font-size:1.1rem; color:var(--primary-accent);" id="modalTitle">التوافقات</div>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-            <div id="modalContentList"></div>
-        </div>
-    </div>
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+    const dbRef = firebase.database();
 
-    <footer>
-        <p>© تم التطوير بواسطة المطور محمد فون</p>
-    </footer>
+    // قوائم الأقسام المخصصة لكل نوع نشاط تجاري
+    const storeCategoriesMap = {
+        mobiles: [
+            { id: 'screens', name: '📱 الشاشات', color: '#2563eb' },
+            { id: 'credit', name: '💳 الأرصدة', color: '#0ea5e9' },
+            { id: 'covers', name: '🛡️ الكفرات', color: '#d97706' },
+            { id: 'stickers', name: '✨ اللواصق', color: '#059669' },
+            { id: 'chargers', name: '🔌 الشواحن', color: '#7c3aed' },
+            { id: 'headphones', name: '🎧 الهيدفونات', color: '#db2777' },
+            { id: 'cables', name: '➰ الكيبلات', color: '#4b5563' }
+        ],
+        cosmetics: [
+            { id: 'makeup_eye', name: '👁️ مكياج العين والوجه', color: '#db2777' },
+            { id: 'skincare', name: '✨ عناية بالبشرة والسيرومات', color: '#059669' },
+            { id: 'perfumes', name: '🌸 العطور والبخاخات', color: '#7c3aed' },
+            { id: 'lipstick', name: '💄 مكياج الشفاه والروج', color: '#ef4444' },
+            { id: 'hairtools', name: '💇‍♀️ أجهزة واستشوار الشعر', color: '#d97706' },
+            { id: 'accessories', name: '💍 الإكسسوارات والحلي', color: '#2563eb' },
+            { id: 'bodycare', name: '🧴 العناية بالجسم والاستحمام', color: '#0ea5e9' }
+        ],
+        clothes: [
+            { id: 'men', name: '👕 ملابس رجالي', color: '#2563eb' },
+            { id: 'women', name: '👗 ملابس نسائية', color: '#db2777' },
+            { id: 'kids', name: '👶 ملابس أطفال', color: '#0ea5e9' },
+            { id: 'shoes', name: '👟 أحذية ومستلزماتها', color: '#d97706' },
+            { id: 'bags', name: '👜 حقائب ومحفظات', color: '#7c3aed' },
+            { id: 'belts', name: '🎗️ إكسسوارات وأحزمة', color: '#059669' },
+            { id: 'sports', name: '⚽ ملابس رياضية', color: '#16a34a' }
+        ],
+        grocery: [
+            { id: 'canned', name: '🥫 المعلبات والمؤن', color: '#d97706' },
+            { id: 'dairy', name: '🧀 الألبان والأجبان', color: '#0ea5e9' },
+            { id: 'sweets', name: '🍫 الحلويات والسكاكر', color: '#db2777' },
+            { id: 'drinks', name: '🧃 المشروبات والعصائر', color: '#2563eb' },
+            { id: 'cleaners', name: '🧼 المنظفات والمطهرات', color: '#059669' },
+            { id: 'pasta', name: '🍝 المعكرونة والبقوليات', color: '#7c3aed' },
+            { id: 'rice_oil', name: '🌾 الأرز والزيوت', color: '#ca8a04' }
+        ],
+        stationery: [
+            { id: 'notebooks', name: '📓 الدفاتر والسجلات', color: '#2563eb' },
+            { id: 'pens', name: '✏️ الأقلام وأدوات الكتابة', color: '#0ea5e9' },
+            { id: 'drawing', name: '🎨 أدوات الرسم والألوان', color: '#db2777' },
+            { id: 'bags_school', name: '🎒 الحقائب المدرسية', color: '#d97706' },
+            { id: 'geometry', name: '📐 أدوات هندسية وحاسبات', color: '#7c3aed' },
+            { id: 'paper', name: '📄 تجليد وورق تصوير', color: '#059669' },
+            { id: 'office', name: '📎 مستلزمات مكتبية', color: '#4b5563' }
+        ]
+    };
 
-    <script>
-        let currentUser = localStorage.getItem('mf_logged_user') || null;
-        let isRegisterMode = false;
+    let activeCategories = storeCategoriesMap.mobiles;
+    let systemData = { inv: [], sales: [], p: {} };
 
-        window.onload = function() {
-            checkAuthSession();
-            renderPrices();
+    // مراقبة تسجيل الدخول الحقيقي من Firebase Auth فقط (بدون أي تجاوز محلي)
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            document.getElementById('auth-overlay').style.display = 'none';
+            document.getElementById('userEmailDisplay').innerText = user.email;
+            loadCloudData();
+        } else {
+            document.getElementById('auth-overlay').style.display = 'flex';
+            document.getElementById('userEmailDisplay').innerText = '';
+        }
+    });
+
+    // التنقل بين شاشات الدخول والتسجيل
+    document.getElementById('btnRegToggle').onclick = () => {
+        document.getElementById('login-form-area').style.display = 'none';
+        document.getElementById('register-form-area').style.display = 'block';
+    };
+    document.getElementById('btnRegBack').onclick = () => {
+        document.getElementById('register-form-area').style.display = 'none';
+        document.getElementById('login-form-area').style.display = 'block';
+    };
+
+    // تغيير نوع المتجر وتوليد الأقسام فوراً
+    document.getElementById('storeTypeSelect').onchange = (e) => {
+        const type = e.target.value;
+        activeCategories = storeCategoriesMap[type] || storeCategoriesMap.mobiles;
+        initUI();
+    };
+
+    // تسجيل الدخول الحقيقي عبر فايربيس (إذا لم يقم المشرف بإنشاء الحساب وتفعيله هنا، فلن يفتح البرنامج أبداً)
+    document.getElementById('btnLogin').onclick = (e) => {
+        e.preventDefault();
+        const email = document.getElementById('auth-email').value.trim();
+        const password = document.getElementById('auth-password').value.trim();
+        
+        if(!email || !password) {
+            alert('يرجى إدخال البريد الإلكتروني وكلمة السر!');
+            return;
+        }
+
+        auth.signInWithEmailAndPassword(email, password)
+            .catch((error) => {
+                alert('فشل تسجيل الدخول: تأكد من أن حسابك مفعل من قبل الإدارة أو صحة البيانات! (' + error.message + ')');
+            });
+    };
+
+    // إرسال طلب إنشاء الحساب إلى pending_requests فقط (ولن يتم تسجيل دخوله تلقائياً)
+    document.getElementById('btnRegSubmit').onclick = (e) => {
+        e.preventDefault();
+        const email = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-password').value.trim();
+        
+        if(!email || !password) {
+            alert('يرجى كتابة البريد وكلمة السر أولاً!');
+            return;
+        }
+
+        const now = new Date();
+        const timeString = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()} ,${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`;
+
+        dbRef.ref('pending_requests').push({
+            email: email,
+            pass: password,
+            time: timeString
+        }).then(() => {
+            alert('تم إرسال طلبك بنجاح إلى pending_requests! لا يمكنك الدخول إلا بعد أن تقوم الإدارة بتفعيل حسابك في النظام.');
+            document.getElementById('reg-email').value = '';
+            document.getElementById('reg-password').value = '';
+            document.getElementById('register-form-area').style.display = 'none';
+            document.getElementById('login-form-area').style.display = 'block';
+        }).catch(err => alert('خطأ في الإرسال: ' + err.message));
+    };
+
+    // تسجيل الخروج
+    document.getElementById('btnLogout').onclick = () => {
+        auth.signOut();
+    };
+
+    // بناء الواجهة ديناميكياً بناءً على النشاط المختار
+    function initUI() {
+        const grid = document.getElementById('mainGrid');
+        grid.innerHTML = '';
+        activeCategories.forEach(c => {
+            if(!systemData.p[c.id]) systemData.p[c.id] = 0;
+            grid.innerHTML += `
+                <div class="section-card" style="border-top-color: ${c.color}">
+                    <h3 style="font-size:16px; margin-bottom:10px;">${c.name}</h3>
+                    <div class="profit-badge"><span>الربح: <span id="p-${c.id}">${systemData.p[c.id]}</span></span></div>
+                    <input type="text" id="bc-${c.id}" placeholder="باركود القطعة" style="margin-bottom:5px;">
+                    <input type="text" id="n-${c.id}" placeholder="اسم المادة" style="margin-bottom:5px;">
+                    <div class="input-group">
+                        <input type="number" id="b-${c.id}" placeholder="شراء">
+                        <input type="number" id="s-${c.id}" placeholder="بيع">
+                        <input type="number" id="q-${c.id}" placeholder="عدد">
+                    </div>
+                    <button class="btn btn-add" onclick="addItem('${c.id}', '${c.name}')" type="button">إضافة للمخزن ➕</button>
+                    <div class="table-wrap"><table id="t-${c.id}"><thead><tr><th>المادة</th><th>عدد</th><th>إجراء</th></tr></thead><tbody></tbody></table></div>
+                </div>`;
+        });
+        render();
+    }
+
+    // إضافة مادة جديدة للمخزن سحابياً
+    function addItem(catKey, catName) {
+        const barcode = document.getElementById(`bc-${catKey}`).value.trim();
+        const name = document.getElementById(`n-${catKey}`).value.trim();
+        const buy = parseInt(document.getElementById(`b-${catKey}`).value) || 0;
+        const sellPrice = parseInt(document.getElementById(`s-${catKey}`).value) || 0;
+        const qty = parseInt(document.getElementById(`q-${catKey}`).value) || 0;
+        
+        if(!name) return alert('يرجى إدخال اسم المادة!');
+        
+        const newItem = { id: Date.now(), barcode, catKey, catName, name, buy, sell: sellPrice, qty };
+        dbRef.ref('store_inv').push(newItem).then(() => {
+            document.getElementById(`bc-${catKey}`).value = '';
+            document.getElementById(`n-${catKey}`).value = '';
+            document.getElementById(`b-${catKey}`).value = '';
+            document.getElementById(`s-${catKey}`).value = '';
+            document.getElementById(`q-${catKey}`).value = '';
+        });
+    }
+
+    // بيع مادة
+    function sell(firebaseKey) {
+        const item = systemData.inv.find(i => i.firebaseKey === firebaseKey);
+        if(!item || item.qty <= 0) return alert("نفدت الكمية!");
+        
+        const profit = item.sell - item.buy;
+        item.qty--;
+
+        const saleData = {
+            saleId: Date.now(),
+            invKey: item.firebaseKey,
+            name: item.name,
+            catKey: item.catKey,
+            catName: item.catName,
+            profit: profit,
+            time: new Date().toLocaleTimeString('ar-IQ')
         };
 
-        function checkAuthSession() {
-            if (!currentUser) {
-                document.getElementById('loginOverlay').style.display = 'flex';
-            } else {
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('welcomeUser').innerText = `أهلاً بك: ${currentUser}`;
-                if(currentUser === 'admin' || currentUser === 'محمد') {
-                    document.getElementById('usersTabBtn').style.display = 'flex';
-                }
-            }
-        }
+        dbRef.ref('store_sales').push(saleData);
+        dbRef.ref(`store_inv/${firebaseKey}`).update({ qty: item.qty });
+        dbRef.ref(`store_profits/${item.catKey}`).set((systemData.p[item.catKey] || 0) + profit);
+    }
 
-        function toggleAuthMode() {
-            isRegisterMode = !isRegisterMode;
-            const btn = document.getElementById('authBtn');
-            const toggleBtn = document.getElementById('toggleAuthBtn');
-            const desc = document.getElementById('authDesc');
-            if(isRegisterMode) {
-                desc.innerText = "إنشاء حساب جديد للوصول إلى أدوات الورشة";
-                btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> تسجيل الحساب الجديد`;
-                toggleBtn.innerText = "لديك حساب؟ تسجيل الدخول";
-            } else {
-                desc.innerText = "تسجيل الدخول للوصول للورشة";
-                btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> دخول التطبيق`;
-                toggleBtn.innerText = "طلب حساب جديد";
-            }
-        }
+    // تحميل البيانات من Firebase Realtime Database
+    function loadCloudData() {
+        dbRef.ref('store_inv').on('value', snapshot => {
+            systemData.inv = [];
+            snapshot.forEach(child => {
+                const item = child.val();
+                item.firebaseKey = child.key;
+                systemData.inv.push(item);
+            });
+            render();
+        });
 
-        function handleAuth() {
-            const u = document.getElementById('loginUser').value.trim();
-            const p = document.getElementById('loginPass').value.trim();
-            const err = document.getElementById('loginError');
+        dbRef.ref('store_profits').on('value', snapshot => {
+            if(snapshot.val()) systemData.p = snapshot.val();
+            render();
+        });
 
-            if(!u || !p) {
-                err.style.display = 'block';
-                err.innerText = "يرجى إدخال اسم المستخدم وكلمة المرور بشكل صحيح.";
-                return;
-            }
+        dbRef.ref('store_sales').on('value', snapshot => {
+            systemData.sales = [];
+            snapshot.forEach(child => {
+                const s = child.val();
+                s.firebaseKey = child.key;
+                systemData.sales.unshift(s);
+            });
+            render();
+        });
+    }
 
-            let users = JSON.parse(localStorage.getItem('mf_users') || '{"admin": "12345", "محمد": "12345"}');
-
-            if(isRegisterMode) {
-                if(users[u]) {
-                    err.style.display = 'block';
-                    err.innerText = "اسم المستخدم موجود مسبقاً، اختر اسماً آخر.";
-                    return;
-                }
-                users[u] = p;
-                localStorage.setItem('mf_users', JSON.stringify(users));
-                alert("تم إنشاء الحساب بنجاح! يمكنك الدخول الآن.");
-                toggleAuthMode();
-                document.getElementById('loginError').style.display = 'none';
-            } else {
-                if(users[u] && users[u] === p) {
-                    localStorage.setItem('mf_logged_user', u);
-                    currentUser = u;
-                    checkAuthSession();
-                    err.style.display = 'none';
-                } else {
-                    err.style.display = 'block';
-                    err.innerText = "خطأ في اسم المستخدم أو كلمة المرور.";
-                }
-            }
-        }
-
-        function handleLogout() {
-            localStorage.removeItem('mf_logged_user');
-            currentUser = null;
-            location.reload();
-        }
-
-        function registerNewUser() {
-            const u = document.getElementById('newRegUser').value.trim();
-            const p = document.getElementById('newRegPass').value.trim();
-            if(!u || !p) {
-                alert("يرجى ملء كافة الحقول لإنشاء الحساب.");
-                return;
-            }
-            let users = JSON.parse(localStorage.getItem('mf_users') || '{"admin": "12345", "محمد": "12345"}');
-            users[u] = p;
-            localStorage.setItem('mf_users', JSON.stringify(users));
-            alert(`تمت إضافة الفني (${u}) بنجاح.`);
-            document.getElementById('newRegUser').value = '';
-            document.getElementById('newRegPass').value = '';
-        }
-
-        function switchSection(secId, cardElem) {
-            document.querySelectorAll('.section-box').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-card').forEach(el => el.classList.remove('active'));
-            document.getElementById(secId).classList.add('active');
-            if(cardElem) cardElem.classList.add('active');
-        }
-
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            const icon = document.getElementById('themeIcon');
-            icon.className = document.body.classList.contains('dark-mode') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-        }
-
-        // فاحص IMEI
-        function analyzeIMEI() {
-            const val = document.getElementById('imeiInput').value.trim();
-            const res = document.getElementById('imeiResult');
-            if(val.length < 8) {
-                alert("يرجى إدخال رقم IMEI صحيح ومكتمل.");
-                return;
-            }
-            res.style.display = 'block';
-            document.getElementById('imeiModelName').innerText = "Xiaomi Redmi Note 12 4G (أو شبيه)";
-            document.getElementById('imeiCpu').innerText = "Qualcomm Snapdragon 685 (6 nm)";
-            document.getElementById('imeiAndroid').innerText = "Android 13 / HyperOS";
-            document.getElementById('imeiMode').innerText = "EDL 9008 Testpoints / Fastboot";
-            document.getElementById('imeiSoftwareTip').innerText = "الجهاز يحتاج غالباً إلى تفليش روم رسمي عبر وضع الـ Fastboot أو تفليش عبر تخطي الحماية بفلاشة مسح كامل (Clean Flash).";
-        }
-
-        function transferImeiToReceipt() {
-            const model = document.getElementById('imeiModelName').innerText;
-            document.getElementById('devModel').value = model;
-            switchSection('receiptSec', document.querySelector('[onclick*="receiptSec"]'));
-        }
-
-        // فاحص المايكات الحي مع التشخيص الفوري
-        let audioContext = null;
-        let analyser = null;
-        let microphone = null;
-        let javascriptNode = null;
-        let isMicTesting = false;
-
-        function toggleMicTest() {
-            const btn = document.getElementById('startMicBtn');
-            const diagBox = document.getElementById('micDiagBox');
-            const meterBar = document.getElementById('micMeterBar');
-            const statusVal = document.getElementById('micStatusVal');
-            const peakVal = document.getElementById('micPeakVal');
-            const reportText = document.getElementById('micReportText');
-            const target = document.getElementById('micTargetSelect').value;
-
-            if(!isMicTesting) {
-                navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-                .then(stream => {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    analyser = audioContext.createAnalyser();
-                    microphone = audioContext.createMediaStreamSource(stream);
-                    javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
-
-                    analyser.smoothingTimeConstant = 0.8;
-                    analyser.fftSize = 512;
-
-                    microphone.connect(analyser);
-                    analyser.connect(javascriptNode);
-                    javascriptNode.connect(audioContext.destination);
-
-                    let maxP = 0;
-                    javascriptNode.onaudioprocess = function() {
-                        let array = new Uint8Array(analyser.frequencyBinCount);
-                        analyser.getByteFrequencyData(array);
-                        let values = 0;
-                        for (let i = 0; i < array.length; i++) {
-                            values += array[i];
-                        }
-                        let average = values / array.length;
-                        let percentage = Math.min(100, Math.round((average / 128) * 100));
-                        if(percentage > maxP) maxP = percentage;
-
-                        meterBar.style.width = percentage + '%';
-                        peakVal.innerText = maxP + ' %';
-
-                        if(percentage > 4) {
-                            statusVal.innerText = "المايك يستقبل بامتياز!";
-                            if(target === 'bottom') {
-                                reportText.innerHTML = `✅ <b>المايك السفلي (Mic1):</b> الاستجابة ممتازة. فلاتة الشحن ومسارات الصوت سليمة ولا يوجد قطع في مسار البيانات أو المايك الرئيسي.`;
-                            } else {
-                                reportText.innerHTML = `✅ <b>المايك العلوي (Mic2):</b> الاستجابة ممتازة. مايك السبيكر وإلغاء الضوضاء يعمل بشكل نظامي.`;
-                            }
-                        } else {
-                            statusVal.innerText = "بانتظار الصوت.. تحدث بالقرب";
-                            if(target === 'bottom') {
-                                reportText.innerHTML = `⚠️ <b>تشخيص المايك السفلي:</b> لم يتم رصد إشارة صوتية عالية. يُنصح بتنظيف فتحة المايك، أو فحص فلاتة الشحن السفلية، أو التأكد من سلامة آيسي الصوت وقصدير القاعدة.`;
-                            } else {
-                                reportText.innerHTML = `⚠️ <b>تشخيص المايك العلوي:</b> إشارة ضعيفة أو معدومة. تأكد من فلاتة السماعة الأمامية ومستشعر الإضاءة والمايك العلوي المتصل بها.`;
-                            }
-                        }
-                    };
-
-                    isMicTesting = true;
-                    btn.style.background = '#ef4444';
-                    btn.innerHTML = `<i class="fa-solid fa-microphone-slash"></i> إيقاف فحص المايك الحي`;
-                    diagBox.style.display = 'block';
-                })
-                .catch(err => {
-                    alert("تعذر الوصول إلى المايكروفون. يرجى السماح للمتصفح بالصلاحية.");
-                });
-            } else {
-                if (javascriptNode) javascriptNode.disconnect();
-                if (microphone) microphone.disconnect();
-                if (audioContext && audioContext.state !== 'closed') audioContext.close();
-
-                isMicTesting = false;
-                btn.style.background = 'var(--primary-accent)';
-                btn.innerHTML = `<i class="fa-solid fa-microphone"></i> بدء فحص المايك الحي`;
-                diagBox.style.display = 'none';
-            }
-        }
-
-        // محلل Panic Full
-        function applyQuickPanicCode(val) {
-            if(!val) return;
-            document.getElementById('panicLogInput').value = `{"bug_type":"210","timestamp":"2026-08-24","os_version":"iOS 17.5","incident_id":"ABC-123","log": "panic(cpu 0 caller 0xffff): ${val} detected"}`;
-            analyzePanicLog();
-        }
-
-        function analyzePanicLog() {
-            const log = document.getElementById('panicLogInput').value.trim();
-            const res = document.getElementById('panicResult');
-            const desc = document.getElementById('panicCauseDesc');
-            res.style.display = 'block';
-
-            if(!log) {
-                desc.innerHTML = "<span style='color:#ef4444;'>يرجى لصق النص أو اختيار كود من القائمة أولاً.</span>";
-                return;
-            }
-
-            let diagnosis = "الملف يشير إلى إعادة تشغيل إجبارية بسبب استجابة النظام (Kernel Panic).";
-            if(log.includes("Kernel data abort") || log.includes("NAND")) {
-                diagnosis = "⚠️ <b>عطل ذاكرة (NAND / المعالج):</b> الخطأ يشير إلى خلل في قراءة الذاكرة أو عطب في بيانات النظام الرئيسية، يتطلب فحص حرارة الذاكرة أو إعادة شبلنتها.";
-            } else if(log.includes("Prs0") || log.includes("AOP")) {
-                diagnosis = "⚠️ <b>حساسات الفيس آيدي أو البارومتر:</b> العطل غالباً بسبب فلاتة الكاميرا الأمامية أو مستشعر الإضاءة والقرب (تأكسد أو دخول سوائل). قم بفصل الفلاتة والتجربة.";
-            } else if(log.includes("Mic1") || log.includes("Mic2")) {
-                diagnosis = "⚠️ <b>مشكلة مايك رئيسي أو علوي:</b> الخطأ يتبع خطوط المايكات وفلاتة الشحن السفلية أو السماعة الداخلية.";
-            } else if(log.includes("GasGauge") || log.includes("SWI") || log.includes("BSI")) {
-                diagnosis = "⚠️ <b>خط بيانات البطارية (BSI):</b> البطارية غير أصلية أو خط قراءة حرارة وشحن البطارية غير متصل بالشكل السليم مع البورد.";
-            } else if(log.includes("Watchdog") || log.includes("SMC")) {
-                diagnosis = "⚠️ <b>تجمد وتعليق المعالج (Watchdog Timeout):</b> عطل شحنات أو قصر في أحد مسارات الباور أو دائرة المعالج الأساسية.";
-            } else {
-                diagnosis = "ℹ️ الكود يحتوي على إخطار عام بـ Panic Log، يُنصح بتجربة سوفت وير نظيف أو فحص المكونات الخارجية بالفصل والتوصيل.";
-            }
-
-            desc.innerHTML = diagnosis;
-        }
-
-        // فاحص الشحن الاحترافي مع التشخيص الشامل
-        function runAdvancedChargingTest() {
-            const dashboard = document.getElementById('diagDashboard');
-            dashboard.style.display = 'block';
-
-            if('getBattery' in navigator) {
-                navigator.getBattery().then(battery => {
-                    updateBatteryStats(battery);
-                    battery.addEventListener('chargingchange', () => updateBatteryStats(battery));
-                    battery.addEventListener('levelchange', () => updateBatteryStats(battery));
-                });
-            } else {
-                document.getElementById('valConn').innerText = "متصل بمصدر طاقة الورشة";
-                document.getElementById('valLevel').innerText = "78%";
-                document.getElementById('valTime').innerText = "حوالي 35 دقيقة للتمام";
-                document.getElementById('chargeReportText').innerHTML = "✅ <b>دائرة الشحن مستقرة:</b> سحب التيار طبيعي (1.8 أمبير)، آيسي الشحن (PMIC) يعمل بكفاءة ولا يوجد قصر في خط VPH_PWR.";
-                renderChart([1.2, 1.6, 1.9, 1.85, 1.85]);
-            }
-        }
-
-        function updateBatteryStats(battery) {
-            const isCharging = battery.charging;
-            document.getElementById('valConn').innerText = isCharging ? "شحن نشط ومستقر (Charging)" : "غير موصول بشاحن (Discharging)";
-            document.getElementById('valLevel').innerText = Math.round(battery.level * 100) + '%';
-            document.getElementById('valTime').innerText = battery.chargingTime === Infinity ? "جاري الحساب..." : Math.round(battery.chargingTime / 60) + " دقيقة";
+    // تحديث وتوزيع البيانات على الشاشة
+    function render() {
+        activeCategories.forEach(c => {
+            const pElem = document.getElementById(`p-${c.id}`);
+            if(pElem) pElem.innerText = (systemData.p[c.id] || 0).toLocaleString();
             
-            const reportEl = document.getElementById('chargeReportText');
-            if(isCharging) {
-                reportEl.innerHTML = "✅ <b>تقرير الشحن:</b> الشاحن متصل والتيار يتدفق بصورة سليمة. الفولتية داخل النطاق الطبيعي ولا توجد حرارة زائدة بكونيكتور البطارية.";
-            } else {
-                reportEl.innerHTML = "⚠️ <b>تنبيه شحن:</b> الجهاز لا يشحن حالياً. إذا كان الكيبل موصولاً، افحص: (1. كونيكتور الشحن وبورده الشحن، 2. مسار خط VBUS حتى آيسي الشحن، 3. سلامة بطارية الجهاز).";
+            const tbody = document.querySelector(`#t-${c.id} tbody`);
+            if(tbody) {
+                tbody.innerHTML = '';
+                systemData.inv.filter(i => i.catKey === c.id).forEach(i => {
+                    tbody.innerHTML += `<tr><td><b>${i.name}</b></td><td>${i.qty}</td><td><button class="btn-sell btn" onclick="sell('${i.firebaseKey}')" type="button">بيع 🛒</button></td></tr>`;
+                });
             }
-            renderChart(isCharging ? [1.0, 1.5, 1.8, 1.85, 1.85] : [0, 0, 0, 0, 0]);
-        }
+        });
 
-        let chargeChart = null;
-        function renderChart(dataPoints) {
-            const ctx = document.getElementById('chargeChart').getContext('2d');
-            if(chargeChart) chargeChart.destroy();
-            chargeChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['0 ثانية', '1 ثانية', '2 ثانية', '3 ثانية', '4 ثانية'],
-                    datasets: [{ label: 'تيار الشحن الحي (A)', data: dataPoints, borderColor: '#0284c7', fill: true, backgroundColor: 'rgba(2, 132, 199, 0.1)', tension: 0.3 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
+        const logBody = document.querySelector("#salesLog tbody");
+        if(logBody) {
+            logBody.innerHTML = '';
+            systemData.sales.slice(0, 15).forEach(s => {
+                logBody.innerHTML += `<tr><td><b>${s.name}</b></td><td>${s.catName}</td><td style="color:var(--success); font-weight:bold;">+${s.profit}</td><td>${s.time}</td><td><button onclick="returnItem('${s.firebaseKey}', '${s.invKey}', '${s.catKey}', ${s.profit})" style="background:none; border:none; cursor:pointer;" type="button">↩️</button></td></tr>`;
             });
         }
+    }
 
-        // أسعار الشاشات
-        const screenPricesData = [
-            { model: "Samsung Galaxy A12 / A02s / A03", price: "35,000 د.ع" },
-            { model: "Realme C53 / C51 / C55 / Note 50", price: "35,000 د.ع" },
-            { model: "Infinix Smart 8 / Hot 30 Play", price: "35,000 د.ع" },
-            { model: "Xiaomi Redmi Note 10 / Note 11", price: "40,000 د.ع" },
-            { model: "Samsung Galaxy A32 4G (Original)", price: "55,000 د.ع" }
-        ];
-
-        function renderPrices() {
-            const container = document.getElementById('pricesListContainer');
-            container.innerHTML = screenPricesData.map(item => `
-                <div class="price-card">
-                    <span style="font-weight:700; font-size:0.88rem;">${item.model}</span>
-                    <span class="price-badge">${item.price}</span>
-                </div>
-            `).join('');
+    // إرجاع مادة
+    function returnItem(saleKey, invKey, catKey, profit) {
+        dbRef.ref(`store_sales/${saleKey}`).remove();
+        dbRef.ref(`store_profits/${catKey}`).set((systemData.p[catKey] || 0) - profit);
+        
+        const item = systemData.inv.find(i => i.firebaseKey === invKey);
+        if(item) {
+            dbRef.ref(`store_inv/${invKey}`).update({ qty: item.qty + 1 });
         }
+    }
 
-        function searchScreenPrices() {
-            const q = document.getElementById('priceSearchInput').value.toLowerCase();
-            const filtered = screenPricesData.filter(i => i.model.toLowerCase().includes(q));
-            document.getElementById('pricesListContainer').innerHTML = filtered.map(item => `
-                <div class="price-card">
-                    <span style="font-weight:700; font-size:0.88rem;">${item.model}</span>
-                    <span class="price-badge">${item.price}</span>
-                </div>
-            `).join('');
-        }
-
-        // دليل التوافقات
-        const compatDatabase = {
-            samsung: [
-                { item: "Galaxy A10s متوافق مع:", match: "Galaxy A02 / M02 (شاشة كاملة بالفريم)" },
-                { item: "Galaxy A20s متوافق مع:", match: "Galaxy A30s / A50 (فريم وشاشة متطابقة)" },
-                { item: "Galaxy A12 متوافق مع:", match: "Galaxy A12 Nacho / M12 / A32 4G" }
-            ],
-            xiaomi: [
-                { item: "Redmi Note 9 متوافق مع:", match: "Redmi 10X 4G" },
-                { item: "Redmi Note 10 4G متوافق مع:", match: "Redmi Note 10S" },
-                { item: "Poco X3 / X3 Pro متوافق مع:", match: "Mi 11 Lite (مع تعديل خفيف بالإطار)" }
-            ],
-            huawei: [
-                { item: "Y6 Prime 2019 متوافق مع:", match: "Honor 8A / Y6s" },
-                { item: "Nova 7i متوافق مع:", match: "Huawei P40 Lite" }
-            ],
-            infinix: [
-                { item: "Hot 10 Play متوافق مع:", match: "Hot 11 Play / Smart 5" },
-                { item: "Note 10 متوافق مع:", match: "Infinix Note 10 Pro" }
-            ],
-            batteries: [
-                { item: "بطارية BN43 (Redmi Note 4X):", match: "متوافقة مع Redmi Note 5A Prime" },
-                { item: "بطارية BLT-AL20 (Honor 9X):", match: "متوافقة مع P Smart 2019" }
-            ],
-            charging: [
-                { item: "بورد شحن A12 متوافق مع:", match: "A125 / A127 / M12" },
-                { item: "بورد شحن A32 متوافق مع:", match: "A32 4G (A325)" }
-            ]
-        };
-
-        function openBrandModal(key, title) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('brandModal').style.display = 'flex';
-            const list = compatDatabase[key] || [];
-            document.getElementById('modalContentList').innerHTML = list.map(i => `
-                <div class="item-card" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-                    <span style="font-weight:800; color:var(--primary-accent); font-size:0.88rem;">${i.item}</span>
-                    <span style="font-weight:700; font-size:0.85rem; color:var(--text-main);">${i.match}</span>
-                </div>
-            `).join('');
-        }
-
-        function closeModal() {
-            document.getElementById('brandModal').style.display = 'none';
-        }
-
-        function startColorTest(color) {
-            const tester = document.getElementById('fullScreenTester');
-            tester.style.backgroundColor = color;
-            tester.style.display = 'flex';
-        }
-
-        function printReceipt() {
-            const name = document.getElementById('custName').value || 'غير محدد';
-            const model = document.getElementById('devModel').value || 'غير محدد';
-            const fault = document.getElementById('repairFault').value || 'صيانة عامة';
-            const cost = document.getElementById('repairCost').value || '0';
-            
-            if(confirm(`--- وصل صيانة: محمد فون Pro ---\nاسم الزبون: ${name}\nالجهاز: ${model}\nالعطل: ${fault}\nالكلفة: ${cost} د.ع\n\nهل تريد طباعة أو حفظ الوصل الآن؟`)) {
-                window.print();
+    // الباركود السريع
+    document.getElementById('quick-barcode').addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') {
+            const code = e.target.value.trim();
+            const item = systemData.inv.find(i => i.barcode === code);
+            if(item) {
+                sell(item.firebaseKey);
+                e.target.value = '';
+            } else {
+                alert('لم يتم العثور على مادة بهذا الباركود!');
+                e.target.value = '';
             }
         }
-    </script>
+    });
+
+
+    initUI();
+</script>
 </body>
 </html>
